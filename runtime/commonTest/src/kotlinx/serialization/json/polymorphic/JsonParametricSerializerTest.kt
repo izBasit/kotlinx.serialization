@@ -6,10 +6,10 @@ package kotlinx.serialization.json.polymorphic
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import kotlin.reflect.*
 import kotlin.test.*
 
 class JsonParametricSerializerTest : JsonTestBase() {
+    val json = Json(JsonConfiguration.Default)
 
     @Serializable
     sealed class Choices {
@@ -23,12 +23,8 @@ class JsonParametricSerializerTest : JsonTestBase() {
         data class HasC(val c: Boolean) : Choices()
     }
 
-    object ChoicesParametricSerializer : JsonParametricSerializer<Choices>() {
-        override val baseClass: KClass<Choices>
-            get() = Choices::class
-
+    object ChoicesParametricSerializer : JsonParametricSerializer<Choices>(Choices::class) {
         override fun selectSerializer(element: JsonElement): KSerializer<out Choices> {
-            val element = element.jsonObject
             return when {
                 "a" in element -> Choices.HasA.serializer()
                 "b" in element -> Choices.HasB.serializer()
@@ -42,9 +38,9 @@ class JsonParametricSerializerTest : JsonTestBase() {
     data class WithChoices(@Serializable(ChoicesParametricSerializer::class) val response: Choices)
 
     private val testDataInput = listOf(
-        """{"response": {"a":"string"}}""",
-        """{"response": {"b":42}}""",
-        """{"response": {"c":true}}"""
+        """{"response":{"a":"string"}}""",
+        """{"response":{"b":42}}""",
+        """{"response":{"c":true}}"""
     )
 
     private val testDataOutput = listOf(
@@ -52,8 +48,6 @@ class JsonParametricSerializerTest : JsonTestBase() {
         WithChoices(Choices.HasB(42)),
         WithChoices(Choices.HasC(true))
     )
-
-    val json = Json(JsonConfiguration.Default)
 
     @Test
     fun testParsesParametrically() = parametrizedTest { streaming ->
@@ -66,4 +60,43 @@ class JsonParametricSerializerTest : JsonTestBase() {
         }
     }
 
+    @Test
+    fun testSerializesParametrically() = parametrizedTest { streaming ->
+        for (i in testDataOutput.indices) {
+            assertEquals(
+                testDataInput[i],
+                json.stringify(WithChoices.serializer(), testDataOutput[i], streaming),
+                "failed test on ${testDataOutput[i]}, useStreaming = $streaming"
+            )
+        }
+    }
+
+    interface Payment {
+        val amount: String
+    }
+
+    @Serializable
+    data class SuccessfulPayment(override val amount: String, val date: String) : Payment
+
+    @Serializable
+    data class RefundedPayment(override val amount: String, val date: String, val reason: String) : Payment
+
+    object PaymentSerializer : JsonParametricSerializer<Payment>(Payment::class) {
+        override fun selectSerializer(element: JsonElement): KSerializer<out Payment> = when {
+            "reason" in element -> RefundedPayment.serializer()
+            else -> SuccessfulPayment.serializer()
+        }
+    }
+
+    @Test
+    fun testDocumentationSample() = parametrizedTest { streaming ->
+        assertEquals(
+            SuccessfulPayment("1.0", "03.02.2020"),
+            json.parse(PaymentSerializer, """{"amount":"1.0","date":"03.02.2020"}""", streaming)
+        )
+        assertEquals(
+            RefundedPayment("2.0", "03.02.2020", "complaint"),
+            json.parse(PaymentSerializer, """{"amount":"2.0","date":"03.02.2020","reason":"complaint"}""", streaming)
+        )
+    }
 }
