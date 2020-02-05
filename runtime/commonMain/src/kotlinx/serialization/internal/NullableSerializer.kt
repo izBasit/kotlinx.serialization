@@ -59,7 +59,7 @@ public class NullableSerializer<T : Any>(private val serializer: KSerializer<T>)
     }
 
     private class SerialDescriptorForNullable(private val original: SerialDescriptor): SerialDescriptor by original {
-        override val serialName: String = original.serialName + ".nullable"
+        override val serialName: String = original.serialName + "?"
         override val isNullable: Boolean
             get() = true
 
