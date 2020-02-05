@@ -86,3 +86,7 @@ internal fun SerialDescriptor.cachedSerialNames(): Set<String> {
     }
     return result
 }
+
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+@PublishedApi
+internal inline fun <T> KSerializer<*>.cast(): KSerializer<T> = this as KSerializer<T>
