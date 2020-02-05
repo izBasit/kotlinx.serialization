@@ -11,7 +11,13 @@ sealed class SerialKind {
 
 sealed class PrimitiveKind : SerialKind() {
     object INT : PrimitiveKind()
+
+    @Deprecated(
+        message = "Primitive kind Unit is deprecated with no replacement. Use UnionKind.OBJECT instead or check for a particular serialName",
+        level = DeprecationLevel.ERROR
+    )
     object UNIT : PrimitiveKind()
+
     object BOOLEAN : PrimitiveKind()
     object BYTE : PrimitiveKind()
     object SHORT : PrimitiveKind()

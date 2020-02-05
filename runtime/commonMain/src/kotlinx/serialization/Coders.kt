@@ -12,7 +12,14 @@ interface Encoder {
     fun encodeNotNullMark()
     fun encodeNull()
 
-    fun encodeUnit()
+    @Deprecated(
+        message = unitDeprecated,
+        level = DeprecationLevel.ERROR
+    )
+    fun encodeUnit() {
+        error("This method is left only for source-level compatibility and is no longer called")
+    }
+
     fun encodeBoolean(value: Boolean)
     fun encodeByte(value: Byte)
     fun encodeShort(value: Short)
@@ -51,7 +58,10 @@ interface CompositeEncoder {
 
     fun shouldEncodeElementDefault(desc: SerialDescriptor, index: Int): Boolean = true
 
-    fun encodeUnitElement(desc: SerialDescriptor, index: Int)
+    @Deprecated(message = unitDeprecated, level = DeprecationLevel.ERROR)
+    fun encodeUnitElement(desc: SerialDescriptor, index: Int) {
+        error("This method is left only for source-level compatibility and is no longer called")
+    }
     fun encodeBooleanElement(desc: SerialDescriptor, index: Int, value: Boolean)
     fun encodeByteElement(desc: SerialDescriptor, index: Int, value: Byte)
     fun encodeShortElement(desc: SerialDescriptor, index: Int, value: Short)
@@ -83,6 +93,7 @@ interface Decoder {
      */
     fun decodeNull(): Nothing?
 
+    @Deprecated(message = unitDeprecated, level = DeprecationLevel.ERROR)
     fun decodeUnit()
     fun decodeBoolean(): Boolean
     fun decodeByte(): Byte
@@ -107,7 +118,7 @@ interface Decoder {
     val updateMode: UpdateMode
 
     fun <T> updateSerializableValue(deserializer: DeserializationStrategy<T>, old: T): T {
-        return when(updateMode) {
+        return when (updateMode) {
             UpdateMode.BANNED -> throw UpdateNotSupportedException(deserializer.descriptor.serialName)
             UpdateMode.OVERWRITE -> decodeSerializableValue(deserializer)
             UpdateMode.UPDATE -> deserializer.patch(this, old)
