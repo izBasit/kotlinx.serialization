@@ -1,11 +1,7 @@
 /*
  * Copyright 2017-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
-
 @file:Suppress("DeprecatedCallableAddReplaceWith")
-/*
- * Copyright 2017-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
- */
 
 package kotlinx.serialization
 
@@ -34,6 +30,7 @@ public fun <T : Any> KClass<T>.serializer(): KSerializer<T> = serializerOrNull()
  * This method has all the restrictions implied by [ImplicitReflectionSerializer].
  * It will return `null` in case serializer can't be obtained reflectively.
  */
+@ImplicitReflectionSerializer
 public fun <T : Any> KClass<T>.serializerOrNull(): KSerializer<T>? = compiledSerializerImpl()
         ?: builtinSerializerOrNull()
 
@@ -83,7 +80,7 @@ expect fun <E : Enum<E>> KClass<E>.enumMembers(): Array<E>
     "This function accidentally slipped to a public API surface and is not intended for public use " +
             "since it does not have clear specification. Provide your own replacement.", level = DeprecationLevel.ERROR
 )
-public fun <T : Any, E : T?> ArrayList<E>.toNativeArray(eClass: KClass<T>): Array<E> = toNativeArrayImpl(eClass)
+public fun <T : Any, E : T?> ArrayList<E>.toNativeArray(eClass: KClass<T>): Array<E> = toNativeArrayImpl<T, E>(eClass)
 
 internal expect fun <T : Any, E : T?> ArrayList<E>.toNativeArrayImpl(eClass: KClass<T>): Array<E>
 
