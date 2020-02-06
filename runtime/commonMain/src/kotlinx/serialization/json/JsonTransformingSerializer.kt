@@ -13,7 +13,7 @@ import kotlinx.serialization.json.internal.*
  * representation of the class.
  *
  * Instead of direct interaction with [Encoder] or [Decoder], this class
- * offers you to manipulate [JsonElement] instead, what can be much easier
+ * allows manipulation with [JsonElement] instead, what can be much easier
  * way to accomplish certain tasks. Please note that this class expects that
  * [Encoder] and [Decoder] are implemented by [JsonInput] and [JsonOutput], i.e.
  * serializers derived from this class work only with [Json] format.
@@ -49,13 +49,13 @@ import kotlinx.serialization.json.internal.*
  *
  * @param T A type for Kotlin property for which this serializer could be applied.
  *        **Not** the type that you may encounter in JSON. (e.g. if you unwrap a list
- *        to a single value `T`,use `T`, not `List<T>`)
+ *        to a single value `T`, use `T`, not `List<T>`)
  * @param tSerializer A serializer for type [T]. Determines [JsonElement] which is passed to [writeTransform].
  *        Should be able to parse [JsonElement] from [readTransform] function.
  *        Usually, default serializer is sufficient.
  * @param transformationName A name for the particular implementation to fulfill [SerialDescriptor.serialName] uniqueness guarantee.
  */
-abstract class JsonTransformingSerializer<T : Any>(
+public abstract class JsonTransformingSerializer<T : Any>(
     private val tSerializer: KSerializer<T>,
     transformationName: String
 ) : KSerializer<T> {

@@ -59,7 +59,6 @@ import kotlin.reflect.*
  *
  * @param T A root class for all classes that could be possibly encountered during serialization and deserialization.
  * @param baseClass A class token for [T].
- *
  */
 public abstract class JsonParametricSerializer<T : Any>(private val baseClass: KClass<T>) : KSerializer<T> {
     /**
@@ -90,7 +89,7 @@ public abstract class JsonParametricSerializer<T : Any>(private val baseClass: K
     }
 
     /**
-     * A function that determines a particular serializer looking on a parsed [element].
+     * Determines a particular serializer by looking on a parsed JSON [element].
      */
     protected abstract fun selectSerializer(element: JsonElement): KSerializer<out T>
 }
