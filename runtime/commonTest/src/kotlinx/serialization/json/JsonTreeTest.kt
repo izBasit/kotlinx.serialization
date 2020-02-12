@@ -45,7 +45,7 @@ class JsonTreeTest : JsonTestBase() {
     )
 
     private val json = Json(JsonConfiguration.Default)
-    private fun prepare(input: String): JsonElement = strict.parseJson(input)
+    private fun prepare(input: String): JsonElement = default.parseJson(input)
 
     @Test
     fun testReadTreeSimple() {

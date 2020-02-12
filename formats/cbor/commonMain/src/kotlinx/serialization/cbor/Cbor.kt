@@ -367,6 +367,10 @@ class Cbor(val updateMode: UpdateMode = UpdateMode.BANNED, val encodeDefaults: B
         private const val HEADER_ARRAY: Int = 0b100_00000
         private const val HEADER_MAP: Int = 0b101_00000
 
+        @Deprecated(
+            message = "Deprecated for removal in the favour of user-defined instances or Cbor companion object",
+            level = DeprecationLevel.WARNING
+        )
         val plain = Cbor()
 
         override fun <T> dump(serializer: SerializationStrategy<T>, value: T): ByteArray = plain.dump(serializer, value)

@@ -15,7 +15,7 @@ class TypeOfSerializerLookupTest {
     private inline fun <reified T> assertSerializedWithType(
         expected: String,
         obj: T,
-        json: StringFormat = Json.unquoted
+        json: StringFormat = Json { unquoted = true }
     ) {
         val serial = serializer<T>()
         assertEquals(expected, json.stringify(serial, obj))

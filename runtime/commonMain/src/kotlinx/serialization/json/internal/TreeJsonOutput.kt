@@ -108,7 +108,7 @@ private sealed class AbstractJsonTreeOutput(
         return encoder
     }
 
-    override fun endEncode(desc: SerialDescriptor) {
+    override fun endEncode(descriptor: SerialDescriptor) {
         nodeConsumer(getCurrent())
     }
 }
